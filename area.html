@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resenha & Café — Busca Científica</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f8f5ef;color:#2d241e;font-family:Inter,Arial,sans-serif}
+header{background:#24160f;color:#fff;padding:18px 24px;position:sticky;top:0;z-index:20}
+.header{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center}
+.logo svg{height:42px;width:auto;display:block}
+main{max-width:1180px;margin:auto;padding:28px 18px 60px}
+h1,h2,h3{font-family:Georgia,serif}.hero{margin-bottom:22px}
+h1{font-size:clamp(30px,5vw,48px);margin:0 0 8px;color:#29170f}
+.hero p{color:#6f6259;margin:0}
+.search-card{background:#fff;border:1px solid #e4dcd2;border-radius:16px;padding:16px;box-shadow:0 8px 28px rgba(40,20,10,.06)}
+.search-line{display:flex;gap:9px}
+input,select{border:1px solid #d9d0c5;background:#fff;border-radius:9px;padding:11px;font:inherit}
+#query{flex:1;min-width:0}
+button{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer}
+#searchBtn{background:#c35d3b;color:#fff}
+.filters{display:grid;grid-template-columns:1fr 1fr 1.1fr .8fr auto;gap:8px;margin-top:10px;align-items:end}
+.filter label{font-size:11px;color:#746960;font-weight:700;display:block}.filter input,.filter select{width:100%;margin-top:4px}
+.check{display:flex;align-items:center;gap:7px;height:42px;font-size:12px;color:#665a52}
+.status{margin:18px 0 10px;padding:11px 13px;background:#fff;border:1px solid #e4dcd2;border-radius:10px;color:#665a52;font-size:13px}
+.status strong{color:#29170f}
+.status.error{color:#9d3c29;background:#fff7f4}
+.results{display:grid;gap:14px}
+.card{background:#fff;border:1px solid #e4dcd2;border-radius:15px;padding:18px;display:grid;grid-template-columns:46px 1fr 155px;gap:15px}
+.index{width:36px;height:36px;border-radius:50%;background:#29170f;color:#fff;display:grid;place-items:center;font-weight:700}
+.card h3{font-size:20px;line-height:1.28;margin:0 0 5px;color:#2b180f}
+.authors{font-size:12px;color:#8a4c35;margin:0 0 7px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0}
+.tag{background:#f2ebe3;border-radius:20px;padding:3px 8px;font-size:10px;color:#68432e}.tag.oa{background:#e9f2e5;color:#47633c}
+.abstract{font-size:13px;line-height:1.55;color:#514840;margin:9px 0 0}
+.actions{display:flex;flex-direction:column;gap:7px}
+.actions a,.review-btn{display:block;text-align:center;text-decoration:none;border:1px solid #ded5ca;border-radius:8px;padding:8px;background:#fff;color:#321b11;font-size:12px;font-weight:700}
+.review-btn{background:#6a4327;color:#fff;border:0}
+.review-btn:disabled{opacity:.6;cursor:wait}
+.review{display:none;margin-top:12px;border-left:3px solid #6a8052;background:#f4f8f0;padding:12px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6;white-space:pre-wrap}
+.review.show{display:block}
+.review-title{font-size:10px;text-transform:uppercase;font-weight:800;color:#587043;margin-bottom:5px}
+.empty,.loading{background:#fff;border:1px dashed #d9d0c5;border-radius:14px;padding:40px;text-align:center;color:#756a62}
+.debug{font-family:monospace;font-size:11px;margin-top:8px;white-space:pre-wrap;display:none}
+@media(max-width:850px){.filters{grid-template-columns:1fr 1fr}.card{grid-template-columns:38px 1fr}.actions{grid-column:2;flex-direction:row;flex-wrap:wrap}.actions>*{flex:1 1 130px}}
+@media(max-width:560px){.search-line{flex-direction:column}.filters{grid-template-columns:1fr 1fr}.card{grid-template-columns:1fr}.index{display:none}.actions{grid-column:1}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Resenha &amp; Café">
+      <svg width="240" height="60" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg x="0" y="0" width="80" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20 35C20 32 22 30 25 30H65C68 30 70 32 70 35V60C70 68 63 75 55 75H35C27 75 20 68 20 60V35Z" fill="#6B4423"/>
+    <path d="M70 40H75C78 40 80 42 80 45V50C80 53 78 55 75 55H70" stroke="#6B4423" stroke-width="3" stroke-linecap="round"/>
+    <rect x="30" y="15" width="30" height="35" rx="2" fill="#F5E6D3"/>
+    <line x1="35" y1="22" x2="55" y2="22" stroke="#8B6F47" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="35" y1="27" x2="55" y2="27" stroke="#8B6F47" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="35" y1="32" x2="50" y2="32" stroke="#8B6F47" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="35" y1="37" x2="55" y2="37" stroke="#8B6F47" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="35" y1="42" x2="48" y2="42" stroke="#8B6F47" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M35 22C35 22 37 18 37 16C37 14 35 12 35 12" stroke="#D4A574" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+    <path d="M45 20C45 20 47 16 47 14C47 12 45 10 45 10" stroke="#D4A574" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+    <path d="M55 22C55 22 57 18 57 16C57 14 55 12 55 12" stroke="#D4A574" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  </svg>
+  <text x="90" y="50" font-family="serif" font-size="36" fill="#2C1810"><tspan font-weight="700" fill="#2C1810">Resenha</tspan><tspan font-weight="400" fill="#6B4423">&amp;</tspan><tspan font-weight="700" fill="#6B4423">Café</tspan></text>
+  <text x="90" y="72" font-family="sans-serif" font-size="11" font-weight="400" fill="#8B6F47" letter-spacing="1.5">CURADORIA DE ARTIGOS CIENTÍFICOS</text>
+</svg>
+    </a>
+  </div>
+</nav>
+
+<main>
+<section class="hero">
+<h1>Busca científica</h1>
+<p>Pesquise e organize literatura científica usando OpenAlex, Crossref, Semantic Scholar e Europe PMC.</p>
+</section>
+
+<section class="search-card">
+<div class="search-line">
+<input id="query" type="search" placeholder="Digite um tema: marketing, inteligência artificial, ESG..." autocomplete="off">
+<button id="searchBtn">🔎 Buscar artigos</button>
+</div>
+<div class="filters">
+<div class="filter"><label>ANO INICIAL</label><input id="fromYear" type="number" min="1900" max="2100" placeholder="2020"></div>
+<div class="filter"><label>ANO FINAL</label><input id="toYear" type="number" min="1900" max="2100" placeholder="2026"></div>
+<div class="filter"><label>IDIOMA</label><select id="language"><option value="">Todos</option><option value="pt">Português</option><option value="en">Inglês</option><option value="es">Espanhol</option><option value="fr">Francês</option></select></div>
+<div class="filter"><label>RESULTADOS</label><select id="limit"><option value="20">20</option><option value="50" selected>50</option><option value="75">75</option><option value="100">100</option></select></div>
+<label class="check"><input id="openAccess" type="checkbox"> Acesso aberto</label>
+</div>
+</section>
+
+<div id="status" class="status">Digite um tema e clique em <strong>Buscar artigos</strong>.</div>
+<div id="debug" class="debug"></div>
+<h2>Resultados</h2>
+<section id="results" class="results"><div class="empty">Os artigos encontrados aparecerão aqui.</div></section>
+</main>
+
+<script>
+/* ==========================================================
+   CONFIGURAÇÃO
+   ========================================================== */
+const SEARCH_WORKER = "https://little-base-b056.wy30032000.workers.dev";
+const REVIEW_WORKER = "https://crimson-hall-565c.wy30032000.workers.dev";
+
+/* ==========================================================
+   ESTADO
+   ========================================================== */
+let artigos = [];
+
+/* ==========================================================
+   HELPERS
+   ========================================================== */
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function text(value){
+  return String(value ?? "").trim();
+}
+
+function authors(value){
+  if(Array.isArray(value)) return value.filter(Boolean).join(", ");
+  return text(value) || "Autores não informados";
+}
+
+function shorten(value, max=650){
+  const v=text(value);
+  return v.length > max ? v.slice(0,max) + "…" : v;
+}
+
+function articleKey(article,index){
+  return String(article.doi || article.source_id || article.title || "artigo") + "-" + index;
+}
+
+/* ==========================================================
+   BUSCA — CONTRATO EXATO DO WORKER V2
+   GET /search?q=...
+   ========================================================== */
+async function buscar(){
+  const q=$("query").value.trim();
+
+  if(q.length < 2){
+    $("status").className="status error";
+    $("status").textContent="Digite pelo menos 2 caracteres para pesquisar.";
+    return;
+  }
+
+  const endpoint=new URL(SEARCH_WORKER + "/search");
+  endpoint.searchParams.set("q",q);
+  endpoint.searchParams.set("limit",$("limit").value);
+
+  if($("fromYear").value)
+    endpoint.searchParams.set("from_year",$("fromYear").value);
+
+  if($("toYear").value)
+    endpoint.searchParams.set("to_year",$("toYear").value);
+
+  if($("language").value)
+    endpoint.searchParams.set("language",$("language").value);
+
+  if($("openAccess").checked)
+    endpoint.searchParams.set("open_access","true");
+
+  $("searchBtn").disabled=true;
+  $("searchBtn").textContent="Buscando…";
+  $("status").className="status";
+  $("status").textContent="Consultando o Worker e as bases científicas…";
+  $("results").innerHTML='<div class="loading">🔎 Pesquisando artigos científicos…</div>';
+  $("debug").style.display="none";
+
+  try{
+    const response=await fetch(endpoint.toString(),{
+      method:"GET",
+      headers:{Accept:"application/json"},
+      cache:"no-store"
+    });
+
+    const raw=await response.text();
+
+    let data;
+    try{
+      data=JSON.parse(raw);
+    }catch(parseError){
+      throw new Error("O Worker respondeu, mas não enviou JSON válido. HTTP "+response.status);
+    }
+
+    if(!response.ok){
+      throw new Error(
+        data?.error ||
+        data?.message ||
+        "O Worker retornou HTTP "+response.status
+      );
+    }
+
+    if(data?.ok !== true){
+      throw new Error(data?.error || data?.message || "O Worker informou uma falha.");
+    }
+
+    /*
+      IMPORTANTE:
+      O Worker V2 retorna:
+      {
+        ok: true,
+        query: "...",
+        results: [...]
+      }
+
+      Portanto NÃO procuramos mais por artigos,
+      trabalhos, data, items etc.
+    */
+    artigos=Array.isArray(data.results) ? data.results : [];
+
+    const sources=data.sources || {};
+    const meta=data.meta || {};
+
+    $("status").className="status";
+    $("status").innerHTML=
+      "<strong>"+artigos.length+"</strong> artigos retornados"+
+      " · OpenAlex: "+(sources.openalex ?? 0)+
+      " · Crossref: "+(sources.crossref ?? 0)+
+      " · Semantic Scholar: "+(sources.semantic_scholar ?? 0)+
+      " · Europe PMC: "+(sources.europe_pmc ?? 0)+
+      (meta.cache==="HIT" ? " · ⚡ cache" : " · 🔎 consulta nova");
+
+    renderizar();
+
+  }catch(error){
+    artigos=[];
+    $("status").className="status error";
+    $("status").innerHTML="<strong>Falha na busca:</strong> "+escapeHTML(error.message);
+    $("results").innerHTML=
+      '<div class="empty"><strong>Não foi possível carregar os artigos.</strong><br>'+
+      'O Worker está online, mas a página encontrou um problema ao processar a resposta.<div class="debug" style="display:block">'+
+      escapeHTML(error.stack || error.message)+'</div></div>';
+  }finally{
+    $("searchBtn").disabled=false;
+    $("searchBtn").textContent="🔎 Buscar artigos";
+  }
+}
+
+/* ==========================================================
+   RENDERIZAÇÃO DIRETA DE results[]
+   ========================================================== */
+function renderizar(){
+  if(!artigos.length){
+    $("results").innerHTML=
+      '<div class="empty"><strong>Nenhum artigo encontrado.</strong><br>'+
+      'O Worker respondeu corretamente, mas a lista <code>results[]</code> veio vazia.</div>';
+    return;
+  }
+
+  $("results").innerHTML=artigos.map((a,i)=>{
+    const key=articleKey(a,i);
+    const id="article-"+i;
+
+    const link =
+      text(a.url) ||
+      (text(a.doi) ? "https://doi.org/"+text(a.doi) : "");
+
+    const pdf=text(a.pdf_url);
+    const open=Boolean(a.open_access || a.fulltext_available);
+
+    return `
+      <article class="card">
+        <div class="index">${i+1}</div>
+
+        <div>
+          <h3>${escapeHTML(a.title || "Título não informado")}</h3>
+
+          <p class="authors">
+            ${escapeHTML(authors(a.authors))}
+          </p>
+
+          <div class="tags">
+            <span class="tag">${escapeHTML(a.year || "Ano não informado")}</span>
+            <span class="tag">${escapeHTML(a.source || "Fonte não informada")}</span>
+            <span class="tag">Citações: ${Number(a.citations || 0)}</span>
+            ${a.doi ? `<span class="tag">DOI: ${escapeHTML(a.doi)}</span>` : ""}
+            ${open ? `<span class="tag oa">Acesso aberto</span>` : ""}
+          </div>
+
+          <p class="abstract">
+            ${escapeHTML(shorten(a.abstract || "Resumo não disponível."))}
+          </p>
+
+          <div id="review-${id}" class="review"></div>
+        </div>
+
+        <div class="actions">
+          ${link ? `<a href="${escapeHTML(link)}" target="_blank" rel="noopener noreferrer">🔗 Ver artigo</a>` : ""}
+          ${pdf ? `<a href="${escapeHTML(pdf)}" target="_blank" rel="noopener noreferrer">📄 Abrir PDF</a>` : ""}
+          <button class="review-btn" id="review-btn-${id}" onclick="gerarResenha(${i})">
+            ✍ Gerar Resenha
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+/* ==========================================================
+   GERAÇÃO DA RESENHA
+   ========================================================== */
+async function gerarResenha(index){
+  const artigo=artigos[index];
+  if(!artigo) return;
+
+  const id="article-"+index;
+  const box=$("review-"+id);
+  const button=$("review-btn-"+id);
+
+  box.classList.add("show");
+  button.disabled=true;
+  box.innerHTML='<div class="review-title">Gerando resenha crítica</div>Aguarde…';
+
+  const prompt=`Produza uma resenha crítica acadêmica em português brasileiro, entre 500 e 800 palavras, usando SOMENTE as informações fornecidas abaixo.
+
+REGRAS:
+- Não invente metodologia, amostra, resultados, números ou conclusões.
+- Se o resumo não permitir avaliar algum ponto, diga explicitamente que a informação não está disponível.
+- Não diga que leu o artigo integral se recebeu apenas os metadados e o resumo.
+- Escreva de forma científica, clara e didática.
+
+ESTRUTURA:
+1. Problema e objetivo
+2. Metodologia ou abordagem identificável
+3. Principais resultados/argumentos
+4. Contribuições
+5. Limitações
+6. Avaliação crítica final
+
+DADOS DO ARTIGO:
+Título: ${text(artigo.title) || "Não informado"}
+Autores: ${authors(artigo.authors)}
+Ano: ${text(artigo.year) || "Não informado"}
+Fonte: ${text(artigo.source) || "Não informado"}
+DOI: ${text(artigo.doi) || "Não informado"}
+
+RESUMO:
+${text(artigo.abstract) || "Resumo não disponível."}`;
+
+  try{
+    const response=await fetch(REVIEW_WORKER,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "Accept":"application/json"
+      },
+      body:JSON.stringify({
+        messages:[{role:"user",content:prompt}],
+        max_tokens:1800
+      })
+    });
+
+    const raw=await response.text();
+    let data;
+
+    try{
+      data=JSON.parse(raw);
+    }catch(e){
+      throw new Error("O Worker de resenha não retornou JSON válido.");
+    }
+
+    if(!response.ok){
+      throw new Error(
+        data?.error?.message ||
+        data?.error ||
+        data?.message ||
+        "HTTP "+response.status
+      );
+    }
+
+    const review =
+      data?.choices?.[0]?.message?.content ||
+      data?.choices?.[0]?.text ||
+      data?.content ||
+      data?.response ||
+      "";
+
+    if(!review)
+      throw new Error("O Worker não retornou o texto da resenha.");
+
+    artigo.resenha=review;
+
+    box.innerHTML=
+      '<div class="review-title">✓ Resenha crítica gerada</div>'+
+      escapeHTML(review);
+
+    button.disabled=false;
+    button.textContent="↻ Gerar novamente";
+
+  }catch(error){
+    box.innerHTML=
+      '<div class="review-title">⚠️ Não foi possível gerar</div>'+
+      escapeHTML(error.message);
+
+    button.disabled=false;
+  }
+}
+
+/* ==========================================================
+   EVENTOS
+   ========================================================== */
+$("searchBtn").addEventListener("click",buscar);
+
+$("query").addEventListener("keydown",event=>{
+  if(event.key==="Enter"){
+    event.preventDefault();
+    buscar();
+  }
+});
+
+const params=new URLSearchParams(location.search);
+const initial=params.get("busca") || params.get("q") || "";
+
+if(initial){
+  $("query").value=initial;
+  buscar();
+}
+</script>
+</body>
+</html>
