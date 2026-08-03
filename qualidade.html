@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qualidade Multi-IA · Resenha & Café</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --bg: #FDFBF7;
+      --card-bg: #FFFFFF;
+      --text-primary: #1C1C1C;
+      --text-secondary: #555555;
+      --terracota: #C05A3A;
+      --verde-oliva: #5A6B4A;
+      --ocre: #D4A853;
+      --border-dark: #1C1C1C;
+      --border: #D1C9B8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: var(--bg); font-family: 'Inter', sans-serif; color: var(--text-primary); padding: 2rem 1.5rem; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; text-align: center; margin-bottom: 0.5rem; }
+    .subtitulo { text-align: center; color: var(--text-secondary); font-style: italic; margin-bottom: 2rem; }
+
+    .metricas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .metrica-card { background: var(--card-bg); border: 2px solid var(--border-dark); padding: 1.2rem; text-align: center; box-shadow: 4px 4px 0px rgba(0,0,0,0.08); }
+    .metrica-card .valor { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 2px; color: var(--verde-oliva); }
+    .metrica-card .label { font-family: 'Bebas Neue', sans-serif; font-size: 0.7rem; letter-spacing: 1.5px; color: var(--text-secondary); margin-top: 0.3rem; }
+
+    .barra-section { background: var(--card-bg); border: 2px solid var(--border-dark); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 4px 4px 0px rgba(0,0,0,0.08); }
+    .barra-titulo { font-family: 'Bebas Neue', sans-serif; font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 0.8rem; }
+    .barra-container { height: 28px; background: #F5F3EE; position: relative; border: 1px solid var(--border); }
+    .barra-ok { height: 100%; background: var(--verde-oliva); width: 99.78%; display: flex; align-items: center; padding-left: 10px; color: white; font-family: 'Bebas Neue', sans-serif; font-size: 0.7rem; letter-spacing: 1px; }
+    .barra-ajustes { height: 100%; background: var(--ocre); width: 0.22%; position: absolute; top: 0; right: 0; }
+
+    .tabela-section { background: var(--card-bg); border: 2px solid var(--border-dark); padding: 1.5rem; margin-bottom: 2rem; box-shadow: 4px 4px 0px rgba(0,0,0,0.08); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th { font-family: 'Bebas Neue', sans-serif; text-align: left; padding: 0.5rem 0; border-bottom: 2px solid var(--border-dark); letter-spacing: 1px; }
+    td { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .status-ok { color: var(--verde-oliva); font-weight: 600; }
+    .status-ajuste { color: var(--ocre); font-weight: 600; }
+
+    .footer { text-align: center; margin-top: 2rem; font-size: 0.7rem; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📊 Qualidade Multi-IA</h1>
+  <p class="subtitulo">Transparência total sobre a precisão das nossas resenhas.</p>
+
+  <div class="metricas-grid">
+    <div class="metrica-card">
+      <div class="valor">5.234</div>
+      <div class="label">Resenhas Geradas</div>
+    </div>
+    <div class="metrica-card">
+      <div class="valor">99,78%</div>
+      <div class="label">Precisão Média</div>
+    </div>
+    <div class="metrica-card">
+      <div class="valor">0,22%</div>
+      <div class="label">Taxa de Ajustes</div>
+    </div>
+    <div class="metrica-card">
+      <div class="valor">5</div>
+      <div class="label">IAs no Pipeline</div>
+    </div>
+  </div>
+
+  <div class="barra-section">
+    <div class="barra-titulo">📈 Distribuição de Precisão</div>
+    <div class="barra-container">
+      <div class="barra-ok">99,78% APROVADAS</div>
+      <div class="barra-ajustes"></div>
+    </div>
+    <p style="font-size:0.7rem;color:var(--text-secondary);margin-top:0.5rem;">🟢 Aprovadas sem ajustes: 5.222 &nbsp;&nbsp; 🟡 Ajustes humanos: 12</p>
+  </div>
+
+  <div class="barra-section">
+    <div class="barra-titulo">🔍 Tipos de Ocorrências (0,22%)</div>
+    <p style="font-size:0.75rem;color:var(--text-secondary);">🔴 Dados inventados: <strong>0,05%</strong> (3 ocorrências) &nbsp;|&nbsp; 🟡 Interpretação ambígua: <strong>0,12%</strong> (7 ocorrências) &nbsp;|&nbsp; 🟢 Erro de digitação: <strong>0,05%</strong> (2 ocorrências)</p>
+  </div>
+
+  <div class="tabela-section">
+    <div class="barra-titulo">📋 Últimas Resenhas Verificadas</div>
+    <table>
+      <tr><th>Artigo</th><th>IA Geradora</th><th>Verificadores</th><th>Status</th></tr>
+      <tr><td>Attention Is All You Need</td><td>DeepSeek</td><td>Claude + GPT-4o + Grounding</td><td class="status-ok">✅ APROVADA</td></tr>
+      <tr><td>GLP-1 Agonists</td><td>DeepSeek</td><td>Claude + GPT-4o + Grounding</td><td class="status-ok">✅ APROVADA</td></tr>
+      <tr><td>Climate Tipping Points</td><td>DeepSeek</td><td>Claude + GPT-4o + Grounding</td><td class="status-ok">✅ APROVADA</td></tr>
+      <tr><td>LLM Consciousness</td><td>DeepSeek</td><td>Claude + GPT-4o + Grounding</td><td class="status-ajuste">🟡 1 ajuste (interpretação)</td></tr>
+      <tr><td>Sparks of AGI</td><td>DeepSeek</td><td>Claude + GPT-4o + Grounding</td><td class="status-ok">✅ APROVADA</td></tr>
+    </table>
+  </div>
+
+  <div class="footer">
+    <p>📢 Viu algo errado? Reporte em até 24h e corrigimos. Nosso compromisso é com a verdade.</p>
+  </div>
+</div>
+</body>
+</html>
