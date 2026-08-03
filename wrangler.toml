@@ -1,0 +1,165 @@
+# =============================================================================
+# Resenha & Café
+# Search Worker V3
+# Cloudflare Wrangler Configuration
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Informações do Worker
+# -----------------------------------------------------------------------------
+
+name = "search-worker-v3"
+main = "workers/search-worker/index.js"
+
+compatibility_date = "2026-08-03"
+compatibility_flags = ["nodejs_compat"]
+
+# -----------------------------------------------------------------------------
+# Variáveis de ambiente (NÃO SENSÍVEIS)
+# -----------------------------------------------------------------------------
+
+[vars]
+
+# Orçamento diário permitido para APIs pagas
+DAILY_BUDGET = "5.00"
+
+# Valor mínimo restante antes de ativar o modo seguro
+SAFE_MODE_THRESHOLD = "0.50"
+
+# Tempo de cache em segundos (30 minutos)
+CACHE_TTL = "1800"
+
+# Quantidade máxima de resultados retornados
+MAX_RESULTS = "100"
+
+# Quantidade máxima consultada por fonte complementar
+COMPLEMENTARY_LIMIT = "30"
+
+# -----------------------------------------------------------------------------
+# Cloudflare KV (Cache Persistente)
+# -----------------------------------------------------------------------------
+# Crie um KV Namespace quando desejar persistir cache entre execuções.
+#
+# wrangler kv namespace create SEARCH_CACHE
+#
+# Depois substitua os IDs abaixo.
+
+# [[kv_namespaces]]
+# binding = "SEARCH_CACHE"
+# id = "SEU_KV_NAMESPACE_ID"
+# preview_id = "SEU_KV_PREVIEW_ID"
+
+# -----------------------------------------------------------------------------
+# Cloudflare R2 (Opcional)
+# -----------------------------------------------------------------------------
+# Utilizado futuramente para armazenar PDFs,
+# arquivos exportados, imagens e documentos.
+
+# [[r2_buckets]]
+# binding = "PDF_STORAGE"
+# bucket_name = "resenha-cafe-pdfs"
+
+# -----------------------------------------------------------------------------
+# Cloudflare D1 (Opcional)
+# -----------------------------------------------------------------------------
+# Banco SQL para histórico de pesquisas,
+# favoritos, usuários e estatísticas.
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "resenha-cafe-db"
+# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# -----------------------------------------------------------------------------
+# Cloudflare AI (Opcional)
+# -----------------------------------------------------------------------------
+
+# [ai]
+# binding = "AI"
+
+# =============================================================================
+# Ambiente de Desenvolvimento
+# =============================================================================
+
+[env.dev]
+
+name = "search-worker-v3-dev"
+main = "workers/search-worker/index.js"
+
+compatibility_date = "2026-08-03"
+compatibility_flags = ["nodejs_compat"]
+
+[env.dev.vars]
+
+DAILY_BUDGET = "1.00"
+SAFE_MODE_THRESHOLD = "0.50"
+CACHE_TTL = "300"
+MAX_RESULTS = "100"
+COMPLEMENTARY_LIMIT = "30"
+
+# =============================================================================
+# Ambiente de Produção
+# =============================================================================
+
+[env.production]
+
+name = "search-worker-v3"
+main = "workers/search-worker/index.js"
+
+compatibility_date = "2026-08-03"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production.vars]
+
+DAILY_BUDGET = "5.00"
+SAFE_MODE_THRESHOLD = "0.50"
+CACHE_TTL = "1800"
+MAX_RESULTS = "100"
+COMPLEMENTARY_LIMIT = "30"
+
+# =============================================================================
+# Secrets (NUNCA colocar no GitHub)
+# =============================================================================
+#
+# Configure todos usando:
+#
+# wrangler secret put OPENALEX_API_KEY
+# wrangler secret put SEMANTIC_SCHOLAR_API_KEY
+# wrangler secret put OPENROUTER_API_KEY
+#
+# Futuras integrações:
+#
+# wrangler secret put CORE_API_KEY
+# wrangler secret put OPENAIRE_API_KEY
+# wrangler secret put SPRINGER_API_KEY
+# wrangler secret put ELSEVIER_API_KEY
+#
+# Para listar:
+#
+# wrangler secret list
+#
+# Para remover:
+#
+# wrangler secret delete NOME_DO_SECRET
+#
+# =============================================================================
+# Deploy
+# =============================================================================
+#
+# Desenvolvimento:
+#
+# wrangler dev
+#
+# Deploy produção:
+#
+# wrangler deploy --env production
+#
+# Validar configuração:
+#
+# wrangler deploy --dry-run
+#
+# Logs em tempo real:
+#
+# wrangler tail
+#
+# =============================================================================
